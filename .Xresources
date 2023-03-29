@@ -16,7 +16,7 @@ XTerm*selectToClipboard: true
 XTerm.vt100.locale:      false 
 XTerm.vt100.utf8:        true
 XTerm*faceName:          Berkeley Mono
-XTerm*visualBell:        true
+XTerm*visualBell:        false
 
 
 *background:                      #222D31
