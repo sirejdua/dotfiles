@@ -20,7 +20,6 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.signcolumn = 'yes'
 vim.opt.wrap = false
-vim.api.nvim_set_keymap('n', 'Y', 'Y', {noremap = true})
 
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -48,13 +47,10 @@ packer.startup(function(use)
   use 'williamboman/mason-lspconfig.nvim'
   use 'neovim/nvim-lspconfig' -- Configurations for Nvim LSP
   use 'nvim-treesitter/nvim-treesitter'
-  use 'sheerun/vim-polyglot'
   -- these are optional themes but I hear good things about gloombuddy ;)
   -- colorbuddy allows us to run the gloombuddy theme
   use 'tjdevries/colorbuddy.nvim'
   use 'bkegley/gloombuddy'
-  -- sneaking some formatting in here too
-  use {'prettier/vim-prettier', run = 'yarn install' }
   use 'simrat39/rust-tools.nvim'
   end
 )
@@ -82,7 +78,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o>
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+  vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
   -- Mappings.
   -- See `:help vim.lsp.*` for documentation on any of the below functions
