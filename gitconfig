@@ -1,0 +1,12 @@
+[include]
+	path = ~/.gitconfig.local
+
+[core]
+	editor = vim
+
+[push]
+	autoSetupRemote = true
+	default = current
+
+[alias]
+	lb = "!f() { \\\n  branches=$(git reflog | grep -o \"checkout: moving from .* to .*\" | \\\n    sed \"s/checkout: moving from .* to //\" | \\\n    awk \"!seen[\\$0]++\" | head -20); \\\n  echo \"$branches\" | nl -v0 -w1 -s\": \" | tac; \\\n  printf \"Select branch (0-19): \"; \\\n  read num; \\\n  case \"$num\" in \\\n    \"\"|*[!0-9]*) echo \"Invalid selection\" ;; \\\n    *) if [ \"$num\" -ge 0 ] && [ \"$num\" -le 19 ]; then \\\n         branch=$(echo \"$branches\" | sed -n \"$((num+1))p\"); \\\n         if [ -n \"$branch\" ]; then \\\n           git checkout \"$branch\"; \\\n         else \\\n           echo \"Invalid selection\"; \\\n         fi; \\\n       else \\\n         echo \"Invalid selection\"; \\\n       fi ;; \\\n  esac; \\\n}; f"

@@ -1,0 +1,12 @@
+# Secrets
+id_rsa*
+*.pem
+*.key
+*.asc
+*.gpg
+.credentials*
+hosts.yml
+oauth_token*
+
+# OS
+.DS_Store
