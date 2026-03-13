@@ -1,0 +1,8 @@
+export GPG_TTY=$(tty)
+export EDITOR=vim
+
+[[ -f ~/.bashrc.local ]] && . ~/.bashrc.local
+
+if [[ -z "$TMUX" ]] && [[ -n "$SSH_CONNECTION" ]]; then
+    tmux new-session -A -s main
+fi

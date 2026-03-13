@@ -1,0 +1,18 @@
+#!/bin/zsh
+
+if [ -d "$HOME/bin" ]; then
+    export PATH="$HOME/bin:$PATH"
+fi
+
+if [ -d "$HOME/.local/bin" ]; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
+drop_in_dir="${ZDOTDIR:-$HOME}/.zshrc.d"
+if [ -d "$drop_in_dir" ]; then
+    for i in "$drop_in_dir"/*; do
+        [[ -e "$i" ]] || continue
+        case "$i" in *~) continue;; esac
+        source "$i"
+    done
+fi
