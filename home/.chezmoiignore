@@ -1,0 +1,15 @@
+{{ if ne .chezmoi.os "linux" }}
+.bashrc
+.gitconfig
+.profile
+.tmux.conf
+.zshrc
+.zshrc.d
+.zshrc.d/**
+{{ end }}
+{{ if eq .chezmoi.hostname "b200-06" }}
+.bashrc
+.gitconfig
+.profile
+.zshrc
+{{ end }}

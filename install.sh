@@ -2,43 +2,28 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
-BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%Y%m%d_%H%M%S)"
-backed_up=false
 
-backup_and_link() {
-    local src="$DOTFILES_DIR/$1"
-    local dst="$2"
+if ! command -v chezmoi >/dev/null 2>&1; then
+    echo "Install chezmoi first: https://www.chezmoi.io/install/" >&2
+    exit 1
+fi
 
-    if [[ -e "$dst" || -L "$dst" ]]; then
-        if [[ "$(readlink -f "$dst" 2>/dev/null)" == "$src" ]]; then
-            echo "  [skip] $dst (already linked)"
-            return
-        fi
-        if [[ ! -L "$dst" ]]; then
-            mkdir -p "$BACKUP_DIR"
-            mv "$dst" "$BACKUP_DIR/$(basename "$dst")"
-            echo "  [backup] $dst -> $BACKUP_DIR/"
-            backed_up=true
-        else
-            rm "$dst"
-        fi
-    fi
-
-    mkdir -p "$(dirname "$dst")"
-    ln -s "$src" "$dst"
-    echo "  [link] $dst -> $src"
-}
+if [[ "$(uname -s)" != "Linux" ]]; then
+    echo "This repository's managed configs are currently Linux-only."
+    exit 0
+fi
 
 echo "=== Dotfiles Install ==="
-echo ""
-echo "Linking configs..."
-backup_and_link "shell/bashrc"   "$HOME/.bashrc"
-backup_and_link "shell/profile"  "$HOME/.profile"
-backup_and_link "shell/zshrc"    "$HOME/.zshrc"
-mkdir -p "$HOME/.zshrc.d"
-backup_and_link "shell/zshrc.d/090_local" "$HOME/.zshrc.d/090_local"
-backup_and_link "tmux.conf"      "$HOME/.tmux.conf"
-backup_and_link "gitconfig"      "$HOME/.gitconfig"
+echo "Previewing changes..."
+chezmoi --source "$DOTFILES_DIR" diff
+
+read -rp "Apply these configs? [y/N] " apply_answer
+if [[ ! "$apply_answer" =~ ^[Yy]$ ]]; then
+    echo "No changes applied."
+    exit 0
+fi
+
+chezmoi --source "$DOTFILES_DIR" apply --verbose
 
 # --- Git identity ---
 if [[ ! -f "$HOME/.gitconfig.local" ]]; then
@@ -92,10 +77,6 @@ if [[ "$tools" =~ ^[Yy]$ ]]; then
 fi
 
 # --- Summary ---
-echo ""
-if $backed_up; then
-    echo "Originals backed up to: $BACKUP_DIR"
-fi
 echo ""
 echo "Done. Machine-specific config goes in:"
 echo "  ~/.bashrc.local    (sourced at end of .bashrc)"
